@@ -1,41 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import css from './Form.module.css';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleAddContact } from '../../redux/contacts';
 
-export const ContactForm = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts.items);
+  const [form, setForm] = useState({
+    name: '',
+    number: '',
+  });
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
 
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
+    // switch (name) {
+    //   case 'name':
+    //     setName(value);
+    //     break;
 
-      case 'number':
-        setNumber(value);
-        break;
+    //   case 'number':
+    //     setNumber(value);
+    //     break;
 
-      default:
-        return;
-    }
+    //   default:
+    //     return;
+    // }
+    setForm(prevForm => ({ ...prevForm, [name]: value }));
   };
+
+  const { name, number } = form;
 
   const handleSubmit = e => {
     e.preventDefault();
-    const contact = {
-      id: nanoid(6),
-      name,
-      number,
-    };
+    dispatch(handleAddContact({ id: nanoid(10), name, number }));
 
-    onSubmit(contact);
-    setName('');
-    setNumber('');
+    const resetForm = () => setForm({ name: '', number: '' });
+    resetForm();
   };
+  useEffect(() => {
+    if (contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }, [contacts]);
 
   return (
     <form className={css.form} onSubmit={handleSubmit}>

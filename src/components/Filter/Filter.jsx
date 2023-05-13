@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import css from './Filter.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterContact } from '../../redux/contacts';
 
-export const Filter = ({ value, onChange }) => {
+export const Filter = () => {
+  const dispatch = useDispatch();
+  const filterValue = useSelector(state => state.contacts.filter);
+
   return (
     <div>
       <label className={css.filter__label}>Find contacts by name</label>
@@ -11,8 +16,8 @@ export const Filter = ({ value, onChange }) => {
         type="text"
         name="filter"
         title="Name may contain only letters"
-        value={value}
-        onChange={onChange}
+        value={filterValue}
+        onChange={e => dispatch(filterContact(e.target.value))}
       />
     </div>
   );

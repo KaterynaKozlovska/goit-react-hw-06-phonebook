@@ -3,18 +3,30 @@ import PropTypes from 'prop-types';
 import css from './List.module.css';
 // import css from '../buttons/IconBtn/IconBtn.module.css';
 import { ReactComponent as DeleteIcon } from '../../assets/close.svg';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { handleRemoveContact } from '../../redux/contacts';
+export const ContactList = () => {
+  const contacts = useSelector(state => state.contacts.items);
+  const filterValue = useSelector(state => state.contacts.filter);
 
-export const ContactList = ({ contacts, onDeleteContact }) => {
+  const isVisibleContacts = () =>
+    contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
+  const filterContact = isVisibleContacts();
+  const dispatch = useDispatch();
+
   return (
     <ul className={css.list}>
-      {contacts.map(({ id, name, number }) => {
+      {filterContact.map(({ id, name, number }) => {
         return (
           <li className={css.item} key={id}>
             {name}: {number}
             <button
               className={css.btn__icon}
               aria-label="Delete contact"
-              onClick={() => onDeleteContact(id)}
+              onClick={() => dispatch(handleRemoveContact(id))}
             >
               <DeleteIcon width="10" heigth="10" />
             </button>
@@ -33,5 +45,4 @@ ContactList.propTypes = {
       number: PropTypes.string.isRequired,
     })
   ),
-  onDeleteContact: PropTypes.func.isRequired,
 };
