@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import css from './Filter.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { filterContact } from '../../redux/contacts';
+import { setFilter } from '../../redux/contacts/filter';
 
 export const Filter = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ export const Filter = () => {
         name="filter"
         title="Name may contain only letters"
         value={filterValue}
-        onChange={e => dispatch(filterContact(e.target.value))}
+        onChange={e => dispatch(setFilter(e.currentTarget.value))}
       />
     </div>
   );
