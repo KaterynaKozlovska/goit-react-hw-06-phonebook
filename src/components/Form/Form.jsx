@@ -8,38 +8,53 @@ import { handleAddContact } from '../../redux/contacts/item';
 export const ContactForm = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.items);
-  const [form, setForm] = useState({
-    name: '',
-    number: '',
-  });
+
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
+    // console.log(name, value);
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
 
-    // switch (name) {
-    //   case 'name':
-    //     setName(value);
-    //     break;
+      case 'number':
+        setNumber(value);
+        break;
 
-    //   case 'number':
-    //     setNumber(value);
-    //     break;
-
-    //   default:
-    //     return;
-    // }
-    setForm(prevForm => ({ ...prevForm, [name]: value }));
+      default:
+        return;
+    }
   };
 
-  const { name, number } = form;
+  const reset = () => {
+    setName('');
+    setNumber('');
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
-    dispatch(handleAddContact({ id: nanoid(10), name, number }));
+    //   dispatch(handleAddContact({ id: nanoid(10), name, number }));
 
-    const resetForm = () => setForm({ name: '', number: '' });
-    resetForm();
+    //   const resetForm = () => setForm({ name: '', number: '' });
+    //   resetForm();
+    // };
+    const normalizedName = name.toLowerCase();
+
+    const duplicate = contacts.find(
+      contacts => contacts.name.toLowerCase() === normalizedName
+    );
+
+    if (duplicate) {
+      alert(`${name} is already in contacts.`);
+    } else {
+      dispatch(handleAddContact({ name, number, id: nanoid() }));
+    }
+    reset();
   };
+
   useEffect(() => {
     if (contacts) {
       localStorage.setItem('contacts', JSON.stringify(contacts));
